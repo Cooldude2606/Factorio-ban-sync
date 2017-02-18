@@ -244,3 +244,6 @@ while i != int(config['Other']['looptime']):
     with open('syncConfig.ini', 'w') as configfile:
         print('WRITING TO CONFIG FILE')
         config.write(configfile)
+	
+	print('SLEEP',float(config['Other']['sleeptime']))
+	sleep(float(config['Other']['sleeptime']))
