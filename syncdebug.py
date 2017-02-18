@@ -59,7 +59,7 @@ def decodeLog(line, server):
         line = line[:-(len(log['color']))]
         log['filler'] = line
         return log
-    else:
+    elif log['type'] ==  'UNBAN' or log['type'] ==  'PROMOTE' or log['type'] ==  'DEMOTE':
         log['player'] = re.search('(.+?) ',line).group(0)[:-1]
         line = line[len(log['player'])+1:]
         tag=re.search('\[(.+?)\]',line)
@@ -70,6 +70,15 @@ def decodeLog(line, server):
         log['byPlayer'] = re.search('by (.+?)\.',line).group(0)[3:-(tag)]
         line = line[:line.find(log['byPlayer'])-1] + line[line.find(log['byPlayer'])+len(log['byPlayer'])+1:]
         log['filler'] = line
+        return log
+    else:
+        log['player'] = re.search('(.+?) ',line).group(0)[:-1]
+        line = line[len(log['player'])+1:]
+        print('')
+        print('FUCK YOU',log['player'])
+        print('')
+        print(line)
+        print(log)
         return log
     
 #gets all new lines from a log
