@@ -161,14 +161,13 @@ def readAdmins():
 #runs a command on every server but the one it came from
 def sync(command):
     for server in config['Server Names']:
-        if server != command['server']:
-            print('SENDING COMMAND FROM',config['Server Names'][command['server']])
-            if command['type'] == 'BAN':
-                print('service %s cmd /%s %s "%s" %s' %(config['Map Names'][server],command['type'].lower(),command['player'],command['reason'],'- '+command['byPlayer']))
-                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], '- '+command['byPlayer']])
-            else:
-                print('service %s cmd /%s %s' %(config['Map Names'][server],command['type'].lower(),command['player']))
-                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player']]) 
+        print('SENDING COMMAND FROM',config['Server Names'][command['server']])
+        if command['type'] == 'BAN':
+            print('service %s cmd /%s %s "%s" %s' %(config['Map Names'][server],command['type'].lower(),command['player'],command['reason'],'- '+command['byPlayer']))
+            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], '- '+command['byPlayer']])
+        else:
+            print('service %s cmd /%s %s' %(config['Map Names'][server],command['type'].lower(),command['player']))
+            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player']]) 
         
 #Startup on first run    
 if config['Other']['firstTimeSetUp'] == 'true':

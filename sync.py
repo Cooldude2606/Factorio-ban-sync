@@ -149,11 +149,10 @@ def readAdmins():
 #runs a command on every server but the one it came from
 def sync(command):
     for server in config['Server Names']:
-        if server != command['server']:
-            if command['type'] == 'BAN':
-                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], '- '+command['byPlayer']])
-            else:
-                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player']])
+        if command['type'] == 'BAN':
+            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], '- '+command['byPlayer']])
+        else:
+            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player']])
         
 #Startup on first run    
 if config['Other']['firstTimeSetUp'] == 'true':
