@@ -13,8 +13,7 @@ print(syncPath)
 print(filterlogPath)
 print('\n')
 #converts a line form a log into a useable list  
-def decodeLog(line, server):
-    print('DECODED LINE FROM',config['Server Names'][server])
+def decodeLog(line, server):  
     log = {}
     log['server'] = server
     log['type'] = re.search('\[(\D+?)\]',line)
@@ -217,6 +216,7 @@ while i != int(config['Other']['looptime']):
             line=line[:-1]
             line = decodeLog(line, server)
             if line['type'] in makeLogOf and line['byPlayer'] != '<server>':
+                print('DECODED LINE FROM',config['Server Names'][server])
                 log(line)
                 if line['type'] == 'BAN':
                     removeFromSync(line['player'],'UNBAN')
