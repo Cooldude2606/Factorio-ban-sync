@@ -1,4 +1,4 @@
-import configparser, os, re, ast, time
+import configparser, os, re, ast, subprocess, time
 scriptDir = os.path.dirname(os.path.realpath('__file__'))
 print('START UP')
 print(scriptDir)
