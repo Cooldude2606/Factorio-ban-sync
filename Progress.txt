@@ -1,0 +1,13 @@
+C:\Users\Dean\Desktop\Do Not Enter!\Python scripts\Factorio ban sync\sync
+
+day 0: made a config file and did some resurch
+day 1: made a function that decodes one line from a log file
+day 2: function which will retrive all new lines of a log also test with data from server.out
+day 3: added a working log file and master ban list
+day 4: All done
+day 5: Working out bugs
+day 6:
+day 7:
+day 8:
+day 9:
+day 10:
