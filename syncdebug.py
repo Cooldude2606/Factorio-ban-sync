@@ -162,11 +162,11 @@ def readAdmins():
 #runs a command on every server but the one it came from
 def sync(command):
     for server in config['Server Names']:
-        print('SENDING COMMAND FROM',config['Server Names'][command['server']])
         if server != command['server']:
+            print('SENDING COMMAND FROM',config['Server Names'][command['server']])
             if command['type'] == 'BAN':
-                print('service %s cmd /%s %s "%s" %s' %(config['Map Names'][server],command['type'].lower(),command['player'],command['reason'],command['byPlayer']))
-                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], command['byPlayer']])
+                print('service %s cmd /%s %s "%s" %s' %(config['Map Names'][server],command['type'].lower(),command['player'],command['reason'],'- '+command['byPlayer']))
+                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], '- '+command['byPlayer']])
             else:
                 print('service %s cmd /%s %s' %(config['Map Names'][server],command['type'].lower(),command['player']))
                 subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player']]) 
@@ -194,17 +194,12 @@ if config['Other']['newserver'].lower() != 'n/a':
         line = line[:-1]
         line = ast.literal_eval(re.search('{(.+?)}',line).group(0))
         if line['type'] == 'BAN':
-            print('service %s cmd /%s %s "%s" %s' %(config['Map Names'][server],line['type'].lower(),line['player'],line['reason'],line['byPlayer']))
-            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+line['type'].lower(), line['player'], line['reason'], line['byPlayer']]) 
+            print('service %s cmd /%s %s "%s" %s' %(config['Map Names'][server],line['type'].lower(),line['player'],line['reason'],'- '+line['byPlayer']))
+            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+line['type'].lower(), line['player'], line['reason'], '- '+line['byPlayer']]) 
         else:
             print('service %s cmd /%s %s' %(config['Map Names'][server],line['type'].lower(),line['player']))
             subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+line['type'].lower(), line['player']]) 
     print('All COMMANDS SEND TO',config['Server Names'][server])
-
-
-
-
-
 
 i = 1
 if i == int(config['Other']['looptime']):

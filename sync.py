@@ -151,7 +151,7 @@ def sync(command):
     for server in config['Server Names']:
         if server != command['server']:
             if command['type'] == 'BAN':
-                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], command['byPlayer']])
+                subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player'], command['reason'], '- '+command['byPlayer']])
             else:
                 subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+command['type'].lower(), command['player']])
         
@@ -173,7 +173,7 @@ if config['Other']['newserver'].lower() != 'n/a':
         line = line[:-1]
         line = ast.literal_eval(re.search('{(.+?)}',line).group(0))
         if line['type'] == 'BAN':
-            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+line['type'].lower(), line['player'], line['reason'], line['byPlayer']])
+            subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+line['type'].lower(), line['player'], line['reason'], '- '+line['byPlayer']])
         else:
             subprocess.call(['service', config['Map Names'][server], 'cmd', '/'+line['type'].lower(), line['player']]) 
 
