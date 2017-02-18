@@ -4,8 +4,8 @@ scriptDir = os.path.dirname(os.path.realpath('__file__'))
 config = configparser.ConfigParser()
 config.read('syncConfig.ini')
 
-syncPath = os.path.join(scriptDir, config['Paths']['MasterBans'])
-filterlogPath = os.path.join(scriptDir, config['Paths']['filterLog'])
+syncPath = os.path.join(scriptDir, os.path.normpath(config['Paths']['MasterBans']))
+filterlogPath = os.path.join(scriptDir, os.path.normpath(config['Paths']['filterLog']))
 
 #converts a line form a log into a useable list  
 def decodeLog(line, server):
@@ -68,7 +68,7 @@ def decodeLog(line, server):
     
 #gets all new lines from a log
 def getNewLines(server):
-    log = open(os.path.join(scriptDir, config['Paths'][server], config['Paths']['log']),'r').readlines()
+    log = open(os.path.join(scriptDir, os.path.normpath(config['Paths'][server]), os.path.normpath(config['Paths']['log'])),'r').readlines()
     if int(config['Log Progress'][server]) <= log.index(log[-1])+1:
         toReturn = log[int(config['Log Progress'][server]):]
     else:
@@ -110,7 +110,7 @@ def removeFromSync(player, type):
 def readBans():
     server = config['Other']['defaultserver']
     log = {}
-    for line in open(os.path.join(scriptDir,config['Paths'][server],config['Paths']['bans']),'r').readlines():
+    for line in open(os.path.join(scriptDir,os.path.normpath(config['Paths'][server]),os.path.normpath(config['Paths']['bans'])),'r').readlines():
         line = line[:-1]
         log['server'] = server
         log['type'] = 'BAN'
@@ -134,7 +134,7 @@ def readBans():
 #reads the first ban list and saves to ban list (only used on first use)
 def readAdmins():
     server = config['Other']['defaultserver']
-    for line in open(os.path.join(scriptDir,config['Paths'][server],config['Paths']['admins']),'r'):
+    for line in open(os.path.join(scriptDir,os.path.normpath(config['Paths'][server]),os.path.normpath(config['Paths']['admins'])),'r'):
         line = line[:-1]
         if re.search('"admins": (.+?)]',line):
             admins = ast.literal_eval(re.search('\[(.+?)\]',line).group(0))

@@ -7,8 +7,8 @@ config.read('syncConfig.ini')
 print(config)
 for section in config.sections():
     print(section)
-syncPath = os.path.join(scriptDir, config['Paths']['MasterBans'])
-filterlogPath = os.path.join(scriptDir, config['Paths']['filterLog'])
+syncPath = os.path.join(scriptDir, os.path.normpath(config['Paths']['MasterBans']))
+filterlogPath = os.path.join(scriptDir, os.path.normpath(config['Paths']['filterLog']))
 print(syncPath)
 print(filterlogPath)
 print('\n')
@@ -75,7 +75,7 @@ def decodeLog(line, server):
     
 #gets all new lines from a log
 def getNewLines(server):
-    log = open(os.path.join(scriptDir, config['Paths'][server], config['Paths']['log']),'r').readlines()
+    log = open(os.path.join(scriptDir, os.path.normpath(config['Paths'][server]), os.path.normpath(config['Paths']['log'])),'r').readlines()
     if int(config['Log Progress'][server]) <= log.index(log[-1])+1:
         toReturn = log[int(config['Log Progress'][server]):]
     else:
@@ -122,7 +122,7 @@ def readBans():
     print('START READING BANS')
     server = config['Other']['defaultserver']
     log = {}
-    for line in open(os.path.join(scriptDir,config['Paths'][server],config['Paths']['bans']),'r').readlines():
+    for line in open(os.path.join(scriptDir,os.path.normpath(config['Paths'][server]),os.path.normpath(config['Paths']['bans'])),'r').readlines():
         line = line[:-1]
         log['server'] = server
         log['type'] = 'BAN'
@@ -147,7 +147,7 @@ def readBans():
 def readAdmins():
     print('START READING ADMINS')
     server = config['Other']['defaultserver']
-    for line in open(os.path.join(scriptDir,config['Paths'][server],config['Paths']['admins']),'r'):
+    for line in open(os.path.join(scriptDir,os.path.normpath(config['Paths'][server]),os.path.normpath(config['Paths']['admins'])),'r'):
         line = line[:-1]
         if re.search('"admins": (.+?)]',line):
             admins = ast.literal_eval(re.search('\[(.+?)\]',line).group(0))
