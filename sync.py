@@ -1,4 +1,4 @@
-import configparser, os, re, ast, subprocess
+import configparser, os, re, ast, subprocess, time
 scriptDir = os.path.dirname(os.path.realpath('__file__'))
 
 config = configparser.ConfigParser()
@@ -211,4 +211,4 @@ while i != int(config['Other']['looptime']):
     with open('syncConfig.ini', 'w') as configfile:
         config.write(configfile)
 
-	sleep(float(config['Other']['sleeptime']))
+    time.sleep(float(config['Other']['sleeptime']))

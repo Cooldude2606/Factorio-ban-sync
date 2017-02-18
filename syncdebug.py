@@ -1,4 +1,4 @@
-import configparser, os, re, ast
+import configparser, os, re, ast, time
 scriptDir = os.path.dirname(os.path.realpath('__file__'))
 print('START UP')
 print(scriptDir)
@@ -245,5 +245,5 @@ while i != int(config['Other']['looptime']):
         print('WRITING TO CONFIG FILE')
         config.write(configfile)
 	
-	print('SLEEP',float(config['Other']['sleeptime']))
-	sleep(float(config['Other']['sleeptime']))
+    print('SLEEP',float(config['Other']['sleeptime']))
+    time.sleep(float(config['Other']['sleeptime']))
