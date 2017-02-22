@@ -43,10 +43,13 @@ def getNewLines():
 
 def log(line):
     with open(logPath,'a') as log:
-        log.write(line)
+        log.write(line+'\n')
 
 def restart(server):
-    pass # restart command to server
+    #service factorio1 new-map mapname.zip data/map-gen-settings.example.json
+    #service <_______> new-game map<__>.zip data/map-gen-settings.example.json
+    subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(masterconfig['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json'])
+    masterconfig['Current Map'][server] = str(int(masterconfig['Current Map'][server])+1)
     
 def manualRestart():
     lines = getNewLines()
@@ -62,17 +65,17 @@ def manualRestart():
                     now = datetime.datetime.now()
                     date = '{:%Y-%m-%d}'.format(datetime.datetime(now.year, now.month, now.day))
                     if code == generateCode(date,line['byplayer'],server,line['server']):
-                        log((server,'was restart by',line['byplayer']))
+                        log(server+' was restart by '+line['byplayer'])
                         findNextRestart(server)
-                        pass #restart(server)
+                        restart(server)
                     else:
-                        log((line['byplayer'],'Failed to restart server'))
+                        log(line['byplayer']+' Failed to restart server')
 
 def autoRestart():
     for server in config['Auto Restart']:
         if config['Auto Restart'][server] != '0' and config['Next Restart'][server] != 'N/A':
             restartDate = datetime.datetime.strptime(config['Next Restart'][server], '%Y-%m-%d')
-            if restartDate > datetime.datetime.now():
-                pass #restart(server)
+            if restartDate < datetime.datetime.now():
+                restart(server)
     with open(os.path.join(relitiveScriptDir,'localConfig.ini'), 'w') as configfile:
         config.write(configfile)

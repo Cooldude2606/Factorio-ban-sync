@@ -47,11 +47,13 @@ def getNewLines():
 
 def log(line):
     with open(logPath,'a') as log:
-        log.write(line)
+        log.write(line+'\n')
 
 def restart(server):
     print('Restarting',masterconfig['Server Names'][server])
-    pass # restart command to server
+    print('service',masterconfig['Map Names'][server],'new-game','map'+str(int(masterconfig['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json')
+    #subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(masterconfig['Current Map'][server]+1))+'.zip','data/map-gen-settings.example.json'])
+    masterconfig['Current Map'][server] = str(int(masterconfig['Current Map'][server])+1)
     
 def manualRestart():
     lines = getNewLines()
@@ -61,7 +63,7 @@ def manualRestart():
         if line['type'] == 'shout' and 'RESTART' in line['message']:
             print('Restart Command Recived From',line['byplayer'])
             message = line['message']
-            #message = 'RESTART S1 >>>1248a'
+            #message = 'RESTART S1 >>>b0087'
             if re.search('S\d',message):
                 server = re.search('S\d',message).group(0)
                 print('Vaild Server')
@@ -71,12 +73,12 @@ def manualRestart():
                     now = datetime.datetime.now()
                     date = '{:%Y-%m-%d}'.format(datetime.datetime(now.year, now.month, now.day))
                     if code == generateCode(date,line['byplayer'],server,line['server']):
-                        log((server,'was restart by',line['byplayer']))
+                        log(server+' was restart by '+line['byplayer'])
                         print(server,'was restart by',line['byplayer'])
                         findNextRestart(server)
-                        pass #restart(server)
+                        restart(server)
                     else:
-                        log((line['byplayer'],'Failed to restart server'))
+                        log(line['byplayer']+' Failed to restart server')
                         print(line['byplayer'],'Failed to restart server')
 
 def autoRestart():
@@ -86,8 +88,8 @@ def autoRestart():
                findNextRestart(server) 
             print('Cheacking %s restart date'%(masterconfig['Server Names'][server]))
             restartDate = datetime.datetime.strptime(config['Next Restart'][server], '%Y-%m-%d')
-            if restartDate > datetime.datetime.now():
-                pass #restart(server)
+            if restartDate < datetime.datetime.now():
+                restart(server)
     manualRestart()
     with open(os.path.join(relitiveScriptDir,'localConfig.ini'), 'w') as configfile:
         print('Saving Config')
