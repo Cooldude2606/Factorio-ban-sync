@@ -139,7 +139,5 @@ def readLogs():
                     log(line)
                 if line['type'] == 'shout':
                     log(line)
-    with open('masterconfig.ini', 'w') as configfile:
-        masterconfig.write(configfile)
     with open(os.path.join(relitiveScriptDir,'localconfig.ini'), 'w') as configfile:
         config.write(configfile)
