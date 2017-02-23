@@ -48,8 +48,8 @@ def log(line):
 def restart(server):
     #service factorio1 new-map mapname.zip data/map-gen-settings.example.json
     #service <_______> new-game map<__>.zip data/map-gen-settings.example.json
-    subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(masterconfig['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json'])
-    masterconfig['Current Map'][server] = str(int(masterconfig['Current Map'][server])+1)
+    subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(config['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json'])
+    config['Current Map'][server] = str(int(config['Current Map'][server])+1)
     
 def manualRestart():
     lines = getNewLines()

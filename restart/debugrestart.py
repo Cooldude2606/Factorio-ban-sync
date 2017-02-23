@@ -51,9 +51,9 @@ def log(line):
 
 def restart(server):
     print('Restarting',masterconfig['Server Names'][server])
-    print('service',masterconfig['Map Names'][server],'new-game','map'+str(int(masterconfig['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json')
-    #subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(masterconfig['Current Map'][server]+1))+'.zip','data/map-gen-settings.example.json'])
-    masterconfig['Current Map'][server] = str(int(masterconfig['Current Map'][server])+1)
+    print('service',masterconfig['Map Names'][server],'new-game','map'+str(int(config['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json')
+    subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(config['Current Map'][server]+1))+'.zip','data/map-gen-settings.example.json'])
+    config['Current Map'][server] = str(int(config['Current Map'][server])+1)
     
 def manualRestart():
     lines = getNewLines()
