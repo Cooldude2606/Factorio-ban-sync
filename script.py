@@ -14,7 +14,7 @@ for i in range(0,int(masterconfig['Other']['looptime'])):
     sync.syncAllServers()
     restart.autoRestart()
     time.sleep(float(masterconfig['Other']['sleeptime']))  
-    
+   
 while masterconfig['Other']['looptime'] == '0':
     log.readLogs()
     sync.syncStratUpChecks()

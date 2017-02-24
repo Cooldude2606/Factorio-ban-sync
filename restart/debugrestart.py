@@ -27,12 +27,13 @@ def findNextRestart(server):
     print('Finding Next Restart for',masterconfig['Server Names'][server])
     if config['Next Restart'][server] == 'N/A':
         now = datetime.datetime.now()
-        date = '{:%Y-%m-%d}'.format(datetime.datetime(now.year, now.month, now.day))
-        date = datetime.datetime.strptime(date, '%Y-%m-%d')
+        date = '{:%Y-%m-%d %H:%M}'.format(datetime.datetime(now.year, now.month, now.day, now.hour, now.minute))
+        date = datetime.datetime.strptime(date, '%Y-%m-%d %H:%M')
     else:
-        date = datetime.datetime.strptime(config['Next Restart'][server], '%Y-%m-%d')
+        date = datetime.datetime.strptime(config['Next Restart'][server], '%Y-%m-%d %H:%M')
     new = date + datetime.timedelta(hours=int(config['Auto Restart'][server]))
-    config['Next Restart'][server] = '{:%Y-%m-%d}'.format(datetime.datetime(new.year, new.month, new.day))
+    config['Next Restart'][server] = '{:%Y-%m-%d %H:%M}'.format(datetime.datetime(new.year, new.month, new.day, new.hour, new.minute))
+    log('Next Restart for %s is %s' %(masterconfig['Server Names'][server],config['Next Restart'][server]))
     print('Next Restart for %s is %s' %(masterconfig['Server Names'][server],config['Next Restart'][server]))
 
 def getNewLines(section):
@@ -87,9 +88,11 @@ def autoRestart():
             if config['Next Restart'][server] == 'N/A':
                findNextRestart(server) 
             print('Cheacking %s restart date'%(masterconfig['Server Names'][server]))
-            restartDate = datetime.datetime.strptime(config['Next Restart'][server], '%Y-%m-%d')
+            restartDate = datetime.datetime.strptime(config['Next Restart'][server], '%Y-%m-%d %H:%M')
             if restartDate < datetime.datetime.now():
                 restart(server)
+            if config['Auto Restart'][server] != '0' and config['Next Restart'][server] == 'N/A':
+                findNextRestart(server)
     manualRestart()
     with open(os.path.join(relitiveScriptDir,'localConfig.ini'), 'w') as configfile:
         print('Saving Config')
