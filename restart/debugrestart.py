@@ -1,4 +1,4 @@
-import configparser, os, re, ast, subprocess, datetime
+import configparser, os, re, ast, subprocess, datetime, json
 scriptDir = os.path.dirname(os.path.realpath('__file__'))
 print(scriptDir)
 masterconfig = configparser.ConfigParser()
@@ -16,8 +16,8 @@ def generateCode(date,player,server,fromServer):
     print('Generating Code for',player)
     dateCode = int(date[:4])*int(date[5:7])/int((oct(int(date[-2:]))[2:]))
     playerCode = ord(player[1])+ord(player[-1])/ord(player[int(len(player)/2)])*ord(player[2])+ord(player[-2])
-    serverCode = float(config['Server Codes'][server])
-    fromserverCode = float(config['More Server Codes'][fromServer])
+    serverCode = float(config['Server Codes'][server])*int(config['Current Map'][server])
+    fromserverCode = float(config['More Server Codes'][fromServer])*int(config['Current Map'][fromServer])
     codewordCode = 0
     for char in config['Other']['codeword']:
         codewordCode = codewordCode + ord(char)*len(player)
@@ -35,14 +35,15 @@ def findNextRestart(server):
     config['Next Restart'][server] = '{:%Y-%m-%d}'.format(datetime.datetime(new.year, new.month, new.day))
     print('Next Restart for %s is %s' %(masterconfig['Server Names'][server],config['Next Restart'][server]))
 
-def getNewLines():
-    log = open(os.path.join(relitiveScriptDir, rawlogPath),'r').readlines()
+def getNewLines(section):
+    file = json.loads(open(os.path.join(relitiveScriptDir, os.path.normpath(config['Paths']['rawlog'])),'r').read())
+    log = file[section]
     if int(config['Other']['logprogress']) <= log.index(log[-1])+1:
         toReturn = log[int(config['Other']['logprogress']):]
     else:
         toReturn = log[0:]
+    print('GOT %s NEW LINES FROM SECTION %s' %(len(toReturn),section) ) 
     config['Other']['logprogress'] = str(log.index(log[-1])+1)
-    print('Found %s new lines'%(str(len(toReturn))))
     return toReturn
 
 def log(line):
@@ -52,17 +53,16 @@ def log(line):
 def restart(server):
     print('Restarting',masterconfig['Server Names'][server])
     print('service',masterconfig['Map Names'][server],'new-game','map'+str(int(config['Current Map'][server])+1)+'.zip','data/map-gen-settings.example.json')
-    subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(config['Current Map'][server]+1))+'.zip','data/map-gen-settings.example.json'])
+    #subprocess.call(['service',masterconfig['Map Names'][server],'new-game','map'+str(int(config['Current Map'][server]+1))+'.zip','data/map-gen-settings.example.json'])
     config['Current Map'][server] = str(int(config['Current Map'][server])+1)
     
 def manualRestart():
-    lines = getNewLines()
-    for line in lines:
-        line = ast.literal_eval(re.search('{(.+?)}',line).group(0))
-        print(line)
-        if line['type'] == 'shout' and 'RESTART' in line['message']:
-            print('Restart Command Recived From',line['byplayer'])
-            message = line['message']
+    lines = getNewLines('shout')
+    for report in lines:
+        print(report)
+        if 'RESTART' in report['message']:
+            print('Restart Command Recived From',report['byplayer'])
+            message = report['message']
             #message = 'RESTART S1 >>>b0087'
             if re.search('S\d',message):
                 server = re.search('S\d',message).group(0)
@@ -72,14 +72,14 @@ def manualRestart():
                     code = re.search('>>>(.+?)$',message).group(0)[3:]
                     now = datetime.datetime.now()
                     date = '{:%Y-%m-%d}'.format(datetime.datetime(now.year, now.month, now.day))
-                    if code == generateCode(date,line['byplayer'],server,line['server']):
-                        log(server+' was restart by '+line['byplayer'])
-                        print(server,'was restart by',line['byplayer'])
+                    if code == generateCode(date,report['byplayer'],server,report['server']):
+                        log(server+' was restart by '+report['byplayer'])
+                        print(server,'was restart by',report['byplayer'])
                         findNextRestart(server)
                         restart(server)
                     else:
-                        log(line['byplayer']+' Failed to restart server')
-                        print(line['byplayer'],'Failed to restart server')
+                        log(report['byplayer']+' Failed to restart server')
+                        print(report['byplayer'],'Failed to restart server')
 
 def autoRestart():
     for server in config['Auto Restart']:

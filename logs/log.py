@@ -1,4 +1,4 @@
-import configparser, os, re
+import configparser, os, re, json
 scriptDir = os.path.dirname(os.path.realpath('__file__'))
 
 masterconfig = configparser.ConfigParser()
@@ -12,8 +12,19 @@ config.read(os.path.join(relitiveScriptDir,'localconfig.ini'))
 logPath = os.path.join(relitiveScriptDir, os.path.normpath(config['Paths']['log']))
 chatlogPath = os.path.join(relitiveScriptDir, os.path.normpath(config['Paths']['chatlog']))
 rawlogPath = os.path.join(relitiveScriptDir, os.path.normpath(config['Paths']['rawlog']))
-rawchatlogPath = os.path.join(relitiveScriptDir, os.path.normpath(config['Paths']['rawchatlog']))
-    
+
+def rawLog(line):
+    if not os.path.isfile(rawlogPath):
+        file = json.dumps({},indent=2)
+        file = json.loads(file)
+    else:
+        file = json.loads(open(rawlogPath, 'r').read())
+    if not line['type'] in file:
+        file[line['type']] = []
+    file[line['type']].append(line)
+    with open(rawlogPath,'w') as log:
+        log.write(json.dumps(file,indent=2))
+
 def removeFromStr(substring,string):
     if substring in string:
         if string.find(substring)-1 <0:
@@ -105,8 +116,6 @@ def log(line):
             lineToAdd = '%s [%s] %s was %s by %s\n' %(line['date'],masterconfig['Server Names'][line['server']],line['player'],(line['type']+'ed').lower(),line['byplayer'])
     with open(logPath, 'a') as log:
         log.write(lineToAdd)
-    with open(rawlogPath, 'a') as log:
-        log.write(str(line)+'\n')
 
 def logChat(line):
     if line['type'] == 'chat':
@@ -115,8 +124,6 @@ def logChat(line):
         lineToAdd = '%s %s %s: %s\n' %(masterconfig['Server Names'][line['server']],line['byplayer'],line['byplayertag'],line['message'])
     with open(chatlogPath, 'a') as log:
         log.write(lineToAdd)
-    with open(rawchatlogPath, 'a') as log:
-        log.write(str(line)+'\n')
 
 def getNewLines(server):
     log = open(os.path.join(scriptDir, os.path.normpath(masterconfig['Paths'][server]), os.path.normpath(masterconfig['Paths']['log'])),'r').readlines()
@@ -139,5 +146,7 @@ def readLogs():
                     log(line)
                 if line['type'] == 'shout':
                     log(line)
+                if line['type'] != 'system':
+                    rawLog(line)
     with open(os.path.join(relitiveScriptDir,'localconfig.ini'), 'w') as configfile:
         config.write(configfile)
